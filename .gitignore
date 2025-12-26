@@ -102,3 +102,12 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# Project specific
+logs/
+*.db
+*.sqlite
+*.sqlite3
+backups/
+temp/
+.streamlit/

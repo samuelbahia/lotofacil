@@ -1,0 +1,193 @@
+# Configuration file for Lottery Analysis System
+
+# Database configuration
+database:
+  type: "sqlite"  # sqlite or postgresql
+  path: "./base/lottery_data.db"
+  backup_enabled: true
+  backup_interval_days: 7
+
+# Supported lotteries
+lotteries:
+  lotofacil:
+    enabled: true
+    min_numbers: 15
+    max_numbers: 18
+    total_numbers: 25
+    draw_count: 15
+    api_url: "https://servicebus2.caixa.gov.br/portaldeloterias/api/resultados/download?modalidade=Lotof%C3%A1cil"
+    prize_tiers:
+      - {matches: 15, name: "15 acertos"}
+      - {matches: 14, name: "14 acertos"}
+      - {matches: 13, name: "13 acertos"}
+      - {matches: 12, name: "12 acertos"}
+      - {matches: 11, name: "11 acertos"}
+  
+  megasena:
+    enabled: true
+    min_numbers: 6
+    max_numbers: 15
+    total_numbers: 60
+    draw_count: 6
+    api_url: "https://servicebus2.caixa.gov.br/portaldeloterias/api/resultados/download?modalidade=Mega-Sena"
+    prize_tiers:
+      - {matches: 6, name: "Sena"}
+      - {matches: 5, name: "Quina"}
+      - {matches: 4, name: "Quadra"}
+  
+  quina:
+    enabled: true
+    min_numbers: 5
+    max_numbers: 15
+    total_numbers: 80
+    draw_count: 5
+    api_url: "https://servicebus2.caixa.gov.br/portaldeloterias/api/resultados/download?modalidade=Quina"
+    prize_tiers:
+      - {matches: 5, name: "Quina"}
+      - {matches: 4, name: "Quadra"}
+      - {matches: 3, name: "Terno"}
+  
+  lotomania:
+    enabled: false
+    min_numbers: 50
+    max_numbers: 50
+    total_numbers: 100
+    draw_count: 20
+    api_url: "https://servicebus2.caixa.gov.br/portaldeloterias/api/resultados/download?modalidade=Lotomania"
+    prize_tiers:
+      - {matches: 20, name: "20 acertos"}
+      - {matches: 19, name: "19 acertos"}
+      - {matches: 18, name: "18 acertos"}
+      - {matches: 17, name: "17 acertos"}
+      - {matches: 16, name: "16 acertos"}
+      - {matches: 0, name: "0 acertos"}
+
+# Data collection settings
+data_collection:
+  auto_update: true
+  update_schedule: "0 21 * * 1,3,5"  # Cron format: 9 PM on Mon, Wed, Fri
+  retry_attempts: 3
+  retry_delay_seconds: 60
+  validate_data: true
+
+# Analysis settings
+analysis:
+  frequency:
+    recent_periods: [10, 20, 50, 100]
+    moving_average_windows: [5, 10, 20]
+  
+  patterns:
+    min_sequence_length: 2
+    max_sequence_length: 4
+    analyze_quadrants: true
+    quadrant_division: 2  # Divide into 2x2 quadrants
+  
+  correlation:
+    min_correlation_threshold: 0.3
+    analyze_pairs: true
+    analyze_triplets: true
+    analyze_quartets: true
+  
+  temporal:
+    analyze_weekday: true
+    analyze_month: true
+    analyze_year_period: true
+
+# Machine Learning settings
+machine_learning:
+  enabled: true
+  models:
+    random_forest:
+      enabled: true
+      n_estimators: 100
+      max_depth: 10
+    lstm:
+      enabled: false  # Requires more computational resources
+      epochs: 50
+      batch_size: 32
+    kmeans:
+      enabled: true
+      n_clusters: 5
+  
+  train_test_split: 0.2
+  cross_validation_folds: 5
+
+# Game generation strategies
+strategies:
+  conservative:
+    weight_hot_numbers: 0.7
+    weight_cold_numbers: 0.1
+    weight_frequency: 0.2
+    ensure_even_odd_balance: true
+    avoid_all_sequential: true
+  
+  aggressive:
+    weight_hot_numbers: 0.5
+    weight_cold_numbers: 0.3
+    weight_frequency: 0.2
+    allow_extreme_patterns: true
+  
+  balanced:
+    weight_hot_numbers: 0.4
+    weight_cold_numbers: 0.3
+    weight_frequency: 0.3
+    distribute_quadrants: true
+    target_average_sum: true
+  
+  intermediate:
+    focus_on_secondary_prizes: true
+    lotofacil_target: [14, 13]
+    megasena_target: [5, 4]
+    quina_target: [4]
+
+# Game generation settings
+game_generation:
+  default_games_per_draw: 10
+  min_games: 1
+  max_games: 50
+  avoid_obvious_patterns: true
+  max_repeated_numbers_across_games: 0.5  # 50% max overlap
+  calculate_roi: true
+  default_strategy: "balanced"
+
+# Backtesting settings
+backtesting:
+  enabled: true
+  test_last_n_draws: 100
+  simulate_strategies: ["conservative", "aggressive", "balanced"]
+  calculate_roi: true
+  monte_carlo_simulations: 1000
+
+# Dashboard settings
+dashboard:
+  framework: "streamlit"  # streamlit or flask
+  port: 8501
+  host: "localhost"
+  auto_refresh: false
+  export_formats: ["pdf", "excel", "csv"]
+
+# Notification settings
+notifications:
+  enabled: false
+  email:
+    enabled: false
+    smtp_server: ""
+    smtp_port: 587
+    from_email: ""
+    to_emails: []
+  push:
+    enabled: false
+
+# Logging settings
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  file: "./logs/lottery_system.log"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  max_bytes: 10485760  # 10MB
+  backup_count: 5
+
+# External sources integration
+external_sources:
+  enabled: false
+  sources: []
+  confidence_threshold: 0.6
