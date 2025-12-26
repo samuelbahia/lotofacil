@@ -178,12 +178,16 @@ class LotterySystem:
         print("LOTTERY SYSTEM - QUICK PLAY")
         print("="*70 + "\n")
         
-        # Update data
-        print("Step 1: Updating data...")
-        self.update_data(lottery_type)
+        # Try to update data (may fail in offline environments)
+        print("Step 1: Checking for data updates...")
+        try:
+            self.update_data(lottery_type)
+        except Exception as e:
+            logger.warning(f"Could not update data (offline mode): {e}")
+            print("  ⚠️  Update skipped (using existing data)")
         
         # Show stats
-        print("Step 2: Database statistics...")
+        print("\nStep 2: Database statistics...")
         self.show_statistics(lottery_type)
         
         # Quick analysis
